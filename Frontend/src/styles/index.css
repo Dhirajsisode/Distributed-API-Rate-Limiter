@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #f5f9ff;
+  --color-brand-100: #e0f0fe;
+  --color-brand-200: #bae2fd;
+  --color-brand-300: #7cc8fc;
+  --color-brand-400: #38a9fa;
+  --color-brand-500: #0e8eed;
+  --color-brand-600: #026fc7;
+  --color-brand-700: #0358a1;
+  --color-brand-800: #074b85;
+  --color-brand-900: #0c3f6e;
+  --color-brand-950: #082849;
+
+  --font-sans: 'Inter', 'system-ui', '-apple-system', sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-zinc-50 antialiased transition-colors duration-300;
+  }
+}
+
+/* Glassmorphism Card Style */
+.glass-card {
+  @apply bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md border border-slate-200/50 dark:border-zinc-800/50 shadow-sm transition-all duration-300;
+}
+
+.glass-card-hover {
+  @apply hover:bg-white/95 dark:hover:bg-zinc-900/95 hover:border-slate-300/80 dark:hover:border-zinc-700/80 hover:shadow-md;
+}
+
+.glass-panel {
+  @apply bg-white/60 dark:bg-zinc-900/60 backdrop-blur-lg border-b border-slate-200/50 dark:border-zinc-800/50;
+}
+
+/* Gradients */
+.gradient-primary {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600 text-white;
+}
+
+.gradient-success {
+  @apply bg-gradient-to-r from-emerald-500 to-teal-600 text-white;
+}
+
+.gradient-warning {
+  @apply bg-gradient-to-r from-amber-500 to-orange-600 text-white;
+}
+
+.gradient-danger {
+  @apply bg-gradient-to-r from-rose-500 to-red-600 text-white;
+}
+
+/* Custom card gradient accents */
+.gradient-card-blue {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(99, 102, 241, 0.03) 100%);
+}
+
+.gradient-card-emerald {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(20, 184, 166, 0.03) 100%);
+}
+
+.gradient-card-rose {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.08) 0%, rgba(225, 29, 72, 0.03) 100%);
+}
+
+.gradient-card-purple {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(139, 92, 246, 0.03) 100%);
+}
+
+/* Toast overrides */
+.Toastify__toast {
+  border-radius: 0.75rem !important;
+  font-family: inherit !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.dark .Toastify__toast {
+  background: rgba(24, 24, 27, 0.9) !important;
+  color: #fff !important;
+  border: 1px solid rgba(63, 63, 70, 0.5) !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-zinc-800 rounded-full hover:bg-slate-400 dark:hover:bg-zinc-700;
+}
