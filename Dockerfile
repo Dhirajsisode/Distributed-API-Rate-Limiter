@@ -1,5 +1,5 @@
 # Stage 1: Build the React Frontend
-FROM node:20-alpine AS frontend-build
+FROM node:22-alpine AS frontend-build
 WORKDIR /app/frontend
 # Copy package.json and package-lock.json
 COPY Frontend/package*.json ./
@@ -40,4 +40,4 @@ COPY --from=backend-build /app/backend/target/*.jar app.jar
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "--enable-preview", "-jar", "app.jar"]
