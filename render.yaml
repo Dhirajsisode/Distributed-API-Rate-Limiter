@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: distributed-rate-limiter
+    env: docker
+    plan: free
+    healthCheckPath: /api/data
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: rate-limiter-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: rate-limiter-redis
+          property: port
+
+  - type: redis
+    name: rate-limiter-redis
+    plan: free

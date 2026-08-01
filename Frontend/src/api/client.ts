@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 // In development, route requests through our Vite proxy ('/api-proxy') to bypass CORS.
-// In production/deployment, use the absolute URL defined in env.
+// In production/deployment, the API is hosted from the same domain, so we use a relative URL.
 const isDev = import.meta.env.DEV;
-const baseURL = isDev ? '/api-proxy' : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
+const baseURL = isDev ? '/api-proxy' : '';
 
 export const apiClient = axios.create({
   baseURL,

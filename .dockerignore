@@ -1,0 +1,12 @@
+.git
+.gitignore
+.dockerignore
+
+# Frontend ignores
+Frontend/node_modules
+Frontend/dist
+Frontend/.env
+
+# Backend ignores
+Backend/target
+Backend/.mvn/wrapper/maven-wrapper.jar
