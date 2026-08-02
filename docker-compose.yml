@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: rate-limiter-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: distributed_api_rate_limiter
+      TZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rate-limiter-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d distributed_api_rate_limiter"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: rate-limiter-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - rate-limiter-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile_inline: |
+        FROM eclipse-temurin:21-jdk-alpine
+        WORKDIR /app
+        COPY mvnw .
+        COPY .mvn .mvn
+        COPY pom.xml .
+        RUN chmod +x ./mvnw
+        RUN ./mvnw dependency:go-offline -B || true
+        COPY src ./src
+        RUN ./mvnw clean package -DskipTests
+        ENTRYPOINT ["java", "-jar", "target/distributedapiratelimiter-0.0.1-SNAPSHOT.jar"]
+    container_name: rate-limiter-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/distributed_api_rate_limiter
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=averylongsecretkeythatisatleast256bitslongforhs256algorithm
+    networks:
+      - rate-limiter-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile_inline: |
+        FROM node:20-alpine
+        WORKDIR /app
+        COPY package*.json ./
+        RUN npm install
+        COPY . .
+        EXPOSE 5173
+        CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    container_name: rate-limiter-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://backend:8080
+    networks:
+      - rate-limiter-network
+    depends_on:
+      - backend
+
+networks:
+  rate-limiter-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
