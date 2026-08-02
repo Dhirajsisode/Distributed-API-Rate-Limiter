@@ -1,15 +1,16 @@
 package com.example.distributedapiratelimiter.filter;
 
+import java.io.IOException;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import com.example.distributedapiratelimiter.service.RateLimiterService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.jspecify.annotations.NonNull;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 @Component
 public class RateLimiterFilter extends OncePerRequestFilter {
@@ -22,8 +23,8 @@ public class RateLimiterFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain)
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
@@ -47,12 +48,10 @@ public class RateLimiterFilter extends OncePerRequestFilter {
             response.setStatus(429);
             response.setContentType("application/json");
 
-            response.getWriter().write("""
-                    {
-                      "status":429,
-                      "message":"Too Many Requests"
-                    }
-                    """);
+            response.getWriter().write("{\n"
+                    + "  \"status\":429,\n"
+                    + "  \"message\":\"Too Many Requests\"\n"
+                    + "}");
             return;
         }
 
