@@ -5,7 +5,7 @@ export const apiService = {
    * Pings the server root to check general reachability/status.
    */
   async getHealth() {
-    const response = await apiClient.get('/');
+    const response = await apiClient.get('/api/health');
     return {
       data: response.data,
       status: response.status,

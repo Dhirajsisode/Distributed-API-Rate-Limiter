@@ -10,34 +10,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ApiController {
 
-    private final RateLimiterService rateLimiterService;
-
-    public ApiController(RateLimiterService rateLimiterService) {
-        this.rateLimiterService = rateLimiterService;
+    public ApiController() {
     }
 
     @GetMapping("/api/data")
     public ResponseEntity<ApiResponse> getData() {
-
-        String userId = "user1";
-
-        if (rateLimiterService.allowRequest(userId)) {
-
-            ApiResponse response = new ApiResponse(
-                    200,
-                    "Request Allowed"
-            );
-
-            return ResponseEntity.ok(response);
-        }
-
+        // Rate limiting is already handled globally by RateLimiterFilter
         ApiResponse response = new ApiResponse(
-                429,
-                "Too Many Requests"
+                200,
+                "Request Allowed"
         );
+        return ResponseEntity.ok(response);
+    }
 
-        return ResponseEntity
-                .status(HttpStatus.TOO_MANY_REQUESTS)
-                .body(response);
+    @GetMapping("/api/health")
+    public ResponseEntity<ApiResponse> getHealth() {
+        return ResponseEntity.ok(new ApiResponse(200, "UP"));
     }
 }
