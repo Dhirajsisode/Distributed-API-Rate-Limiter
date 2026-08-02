@@ -1,0 +1,40 @@
+warning: in the working copy of 'Backend/src/main/java/com/example/distributedapiratelimiter/config/RedisConfig.java', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/Backend/src/main/java/com/example/distributedapiratelimiter/config/RedisConfig.java b/Backend/src/main/java/com/example/distributedapiratelimiter/config/RedisConfig.java[m
+[1mindex cf0908e..838e00c 100644[m
+[1m--- a/Backend/src/main/java/com/example/distributedapiratelimiter/config/RedisConfig.java[m
+[1m+++ b/Backend/src/main/java/com/example/distributedapiratelimiter/config/RedisConfig.java[m
+[36m@@ -1,5 +1,8 @@[m
+ package com.example.distributedapiratelimiter.config;[m
+ [m
+[32m+[m[32mimport org.slf4j.Logger;[m
+[32m+[m[32mimport org.slf4j.LoggerFactory;[m
+[32m+[m[32mimport org.springframework.boot.ApplicationRunner;[m
+ import org.springframework.context.annotation.Bean;[m
+ import org.springframework.context.annotation.Configuration;[m
+ import org.springframework.data.redis.connection.RedisConnectionFactory;[m
+[36m@@ -8,8 +11,25 @@[m [mimport org.springframework.data.redis.core.StringRedisTemplate;[m
+ @Configuration[m
+ public class RedisConfig {[m
+ [m
+[32m+[m[32m    private static final Logger logger = LoggerFactory.getLogger(RedisConfig.class);[m
+[32m+[m
+     @Bean[m
+     public StringRedisTemplate redisTemplate(RedisConnectionFactory connectionFactory) {[m
+         return new StringRedisTemplate(connectionFactory);[m
+     }[m
+[32m+[m
+[32m+[m[32m    @Bean[m
+[32m+[m[32m    public ApplicationRunner verifyRedisConnection(StringRedisTemplate redisTemplate) {[m
+[32m+[m[32m        return args -> {[m
+[32m+[m[32m            try {[m
+[32m+[m[32m                logger.info("Verifying Redis connection...");[m
+[32m+[m[32m                // Attempt a simple read operation to verify connectivity[m
+[32m+[m[32m                redisTemplate.opsForValue().get("startup-verification");[m
+[32m+[m[32m                logger.info("Successfully connected to Redis. Rate Limiter datastore is ready.");[m
+[32m+[m[32m            } catch (Exception e) {[m
+[32m+[m[32m                logger.error("FATAL ERROR: Failed to connect to Redis. The application cannot start without Redis.", e);[m
+[32m+[m[32m                throw new IllegalStateException("Failed to connect to Redis during startup. Redis is required for Rate Limiting.", e);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        };[m
+[32m+[m[32m    }[m
+ }[m
