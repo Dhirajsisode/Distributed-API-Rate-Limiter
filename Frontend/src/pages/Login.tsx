@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth } from '../context/AuthContext';
-import { ShieldCheck, Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
+import { ShieldCheck, User, Lock, Loader2, ArrowRight } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  password: z.string().min(4, { message: 'Password must be at least 4 characters long' }),
-  fullName: z.string().optional(),
+  usernameOrEmail: z.string().min(1, { message: 'Username or email is required' }),
+  password: z.string().min(1, { message: 'Password is required' }),
 });
 
 type LoginSchemaType = z.infer<typeof loginSchema>;
@@ -26,24 +25,18 @@ export const Login: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginSchemaType>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: 'admin@company.com',
-      password: 'admin',
-    },
+    resolver: zodResolver(loginSchema)
   });
 
   const onSubmit = async (data: LoginSchemaType) => {
     setIsLoading(true);
-    try {
-      await login(data.email, data.fullName || 'Enterprise Admin');
+    const success = await login(data.usernameOrEmail, data.password);
+    if (success) {
       toast.success('Successfully authenticated! Welcome back.');
       navigate('/dashboard');
-    } catch {
-      toast.error('Authentication failed. Please check your credentials.');
-    } finally {
-      setIsLoading(false);
     }
+    // AuthContext handles error toast
+    setIsLoading(false);
   };
 
   return (
@@ -76,34 +69,39 @@ export const Login: React.FC = () => {
         {/* Card Form */}
         <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 rounded-3xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email Field */}
+            {/* Username/Email Field */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-zinc-300 tracking-wider">
-                EMAIL ADDRESS
+                USERNAME OR EMAIL
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-zinc-500">
-                  <Mail className="w-4 h-4" />
+                  <User className="w-4 h-4" />
                 </span>
                 <input
-                  type="email"
-                  {...register('email')}
+                  type="text"
+                  {...register('usernameOrEmail')}
                   className={`w-full pl-10 pr-4 py-3 rounded-xl bg-zinc-950 border text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all ${
-                    errors.email ? 'border-red-500/50' : 'border-zinc-800 focus:border-zinc-700'
+                    errors.usernameOrEmail ? 'border-red-500/50' : 'border-zinc-800 focus:border-zinc-700'
                   }`}
                   placeholder="admin@company.com"
                 />
               </div>
-              {errors.email && (
-                <p className="text-xs text-red-400 font-medium">{errors.email.message}</p>
+              {errors.usernameOrEmail && (
+                <p className="text-xs text-red-400 font-medium">{errors.usernameOrEmail.message}</p>
               )}
             </div>
 
             {/* Password Field */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300 tracking-wider">
-                SECURITY PASSWORD
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-semibold text-zinc-300 tracking-wider">
+                  SECURITY PASSWORD
+                </label>
+                <Link to="/forgot-password" className="text-xs text-blue-400 hover:text-blue-300">
+                  Forgot Password?
+                </Link>
+              </div>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-zinc-500">
                   <Lock className="w-4 h-4" />
@@ -122,16 +120,11 @@ export const Login: React.FC = () => {
               )}
             </div>
 
-            {/* Hint Box */}
-            <div className="bg-blue-950/20 border border-blue-900/30 rounded-xl p-3 text-[11px] text-blue-400 leading-normal">
-              <strong>Quick access tip:</strong> Enter any email and password (e.g. <code>admin@company.com</code> / <code>admin</code>) to log in instantly.
-            </div>
-
             {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:opacity-50 text-white text-sm font-semibold tracking-wide transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98]"
+              className="w-full flex items-center justify-center py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:opacity-50 text-white text-sm font-semibold tracking-wide transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98] mt-2"
             >
               {isLoading ? (
                 <>
@@ -146,6 +139,15 @@ export const Login: React.FC = () => {
               )}
             </button>
           </form>
+          
+          <div className="mt-6 text-center">
+            <p className="text-sm text-zinc-400">
+              Don't have an account?{' '}
+              <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium">
+                Create one now
+              </Link>
+            </p>
+          </div>
         </div>
 
         {/* Footer info */}

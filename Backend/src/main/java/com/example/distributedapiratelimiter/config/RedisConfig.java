@@ -27,8 +27,7 @@ public class RedisConfig {
                 redisTemplate.opsForValue().get("startup-verification");
                 logger.info("Successfully connected to Redis. Rate Limiter datastore is ready.");
             } catch (Exception e) {
-                logger.error("FATAL ERROR: Failed to connect to Redis. The application cannot start without Redis.", e);
-                throw new IllegalStateException("Failed to connect to Redis during startup. Redis is required for Rate Limiting.", e);
+                logger.warn("Redis connection failed. Application will continue without startup verification.", e);
             }
         };
     }

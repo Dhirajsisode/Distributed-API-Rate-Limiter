@@ -7,6 +7,8 @@ import { Loader2 } from 'lucide-react';
 
 // Lazy loading components for optimized bundle splitting & performance
 const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const DashboardLayout = lazy(() => import('./layouts/DashboardLayout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Analytics = lazy(() => import('./pages/Analytics'));
@@ -51,6 +53,8 @@ export const App: React.FC = () => {
             <Routes>
               {/* Public Authenticate Path */}
               <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
 
               {/* Protected Console Paths */}
               <Route

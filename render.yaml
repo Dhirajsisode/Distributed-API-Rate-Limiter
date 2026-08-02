@@ -19,6 +19,30 @@ services:
           name: rate-limiter-redis
           property: port
 
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: rate-limiter-db
+          property: connectionString
+
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: rate-limiter-db
+          property: user
+
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: rate-limiter-db
+          property: password
+
+      - key: JWT_SECRET
+        generateValue: true
+
   - type: redis
     name: rate-limiter-redis
+    plan: free
+
+databases:
+  - name: rate-limiter-db
+    databaseName: distributed_api_rate_limiter
+    user: postgres
     plan: free

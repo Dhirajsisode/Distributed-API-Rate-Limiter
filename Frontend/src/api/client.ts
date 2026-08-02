@@ -17,6 +17,13 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   // Store start timestamp on config
   (config as any).metadata = { startTime: new Date().getTime() };
+  
+  // Attach JWT Token if it exists
+  const token = localStorage.getItem('auth_token');
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  
   return config;
 });
 
